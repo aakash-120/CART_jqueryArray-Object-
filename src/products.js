@@ -7,6 +7,7 @@ var products = [
 ];
 
 storedInCart = []
+//var PriceCalc  =0
 for(var i =0 ; i < products.length ; i++)
 {
     products[i].quantity = 0;
@@ -75,10 +76,15 @@ $("#id1").html("<h1>Items Added in CART</h1>")
     html += '<table id = "customers"><tr><th>ID</th><th>NAME</th><th>PRICE</th><th>Quantity</th><th>Action</th><th></th></tr>';
     for(i =0 ; i < storedInCart.length ; i++)
     {
-        html += '<tr><td>'+storedInCart[i].id+'</td><td>'+storedInCart[i].name+'</td><td>'+storedInCart[i].price+'</td><td>'+storedInCart[i].quantity+'</td><td><button class="editclass" data-pid2 = "'+storedInCart[i].id+'">ADD</button></td> <td><button id="delclass" data-did = "'+storedInCart[i].id+'">DELETE</button></td></tr>';
+        var priceC = parseInt(storedInCart[i].price);
+        var quanC = parseInt(storedInCart[i].quantity);
+        var calc = priceC * quanC
+        html += '<tr><td>'+storedInCart[i].id+'</td><td>'+storedInCart[i].name+'</td><td>'+calc+ '</td><td>'+storedInCart[i].quantity+'</td><td><button class="editclass" data-pid2 = "'+storedInCart[i].id+'">ADD</button></td> <td><button id="delclass" data-did = "'+storedInCart[i].id+'">DELETE</button></td></tr>';
+       // PriceCalc +=priceC
     }
     html += '</table><br><button id="emptycart">EMPTY CART</button>';
     $("#footer").html(html)   
+    // $("#id3").html('<p>total price = '+PriceCalc+'</p>') 
 }
 
 
