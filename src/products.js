@@ -12,16 +12,15 @@ for(var i =0 ; i < products.length ; i++)
     products[i].quantity = 0;
 }
 
-var eachProduct = {};
 display()
 
 function display()
 {
     var html = "";
-   // console.log("first")
+  
     for(var i =0 ; i< products.length ; i++)
     {
-       // console.log("second")
+     
         html+='<div id="'+products[i].id+'" class="product">\
 				<img src="images/'+products[i].image+'">\
 				<h3 class="title"><a href="#">Product '+products[i].id+'</a></h3>\
@@ -29,8 +28,9 @@ function display()
 				<a class="add-to-cart" href="#" data-pid = "'+products[i].id+'">Add To Cart</a>\
 			</div>'
     }
-   // console.log("third")
+  
     $('#products').html(html);
+   
 }
 
 
@@ -47,7 +47,7 @@ $(document).ready(function(){
              increaseQuantity(product)
          }        
         
-        display2(storedInCart,pid)
+        display2()
     });
  });
 
@@ -69,19 +69,16 @@ $(document).ready(function(){
  }
 
 
-function display2(storedInCart,pid) {
-   console.log("stored in cart length "+storedInCart.length)
-
-    document.getElementById('id1').innerHTML = "<h1>Items Added in CART</h1>";
+function display2() {
+$("#id1").html("<h1>Items Added in CART</h1>")
     var html = '';
     html += '<table id = "customers"><tr><th>ID</th><th>NAME</th><th>PRICE</th><th>Quantity</th><th>Action</th><th></th></tr>';
     for(i =0 ; i < storedInCart.length ; i++)
     {
-        html += '<tr><td>'+storedInCart[i].id+'</td><td>'+storedInCart[i].name+'</td><td>'+storedInCart[i].price+'</td><td>'+storedInCart[i].quantity+'</td><td><button class="editclass" data-pid2 = "'+storedInCart[i].id+'">ADD</button></td> <td><button id="delclass">DELETE</button></td></tr>';
-
+        html += '<tr><td>'+storedInCart[i].id+'</td><td>'+storedInCart[i].name+'</td><td>'+storedInCart[i].price+'</td><td>'+storedInCart[i].quantity+'</td><td><button class="editclass" data-pid2 = "'+storedInCart[i].id+'">ADD</button></td> <td><button id="delclass" data-did = "'+storedInCart[i].id+'">DELETE</button></td></tr>';
     }
-    html += '</table>';
-    document.getElementById('footer').innerHTML = html;
+    html += '</table><br><button id="emptycart">EMPTY CART</button>';
+    $("#footer").html(html)   
 }
 
 
@@ -97,10 +94,31 @@ function getProduct(pid)
 }
 
 $("body").on("click","#delclass" ,function(e){
-    $(this).parents('tr').remove();
+   // console.log("delete key is pressed")
+    var did = $(this).data('did');
+    var product = getProduct(did);
+   // console.log("in delete fucntoin pid = "+did);
+    for(var  i =0 ; i < storedInCart.length ; i++)
+    {
+        if(did == storedInCart[i].id)
+        {
+            if(storedInCart[i].quantity == 1)
+            {
+                $(this).parents('tr').remove();
+                storedInCart.splice(i, 1);
+                break;
+            }
+            storedInCart[i].quantity = storedInCart[i].quantity - 1;        
+        }
+    }
+    display2()
   });
 
 
+$("body").on("click","#emptycart" ,function(e){
+    storedInCart = []
+    display2()
+  });
 
 
 $("body").on("click",".editclass" ,function(e){
@@ -108,7 +126,6 @@ $("body").on("click",".editclass" ,function(e){
     var pid = $(this).data('pid2');
     var product = getProduct(pid);
     console.log("in edit fucntoin pid = "+pid);
-
     var Q = "";
     for(var i =0 ; i < storedInCart.length ; i++)
     {
@@ -117,7 +134,6 @@ $("body").on("click",".editclass" ,function(e){
             Q = storedInCart[i].quantity
         }
     }
-
 
     $(this).parents('tr').find('td:eq(3)').html("<input name='edit_quantity' value='"+Q+"'>");
     $(this).parents('tr').find('td:eq(4)').prepend("<button type='button'  class='updatebutton' data-pid3 = '"+pid+"'>Update</button>");
@@ -138,11 +154,12 @@ for(var i =0 ; i < storedInCart.length ; i++)
 {
     if(storedInCart[i].id == pid)
     {
-        storedInCart[i].quantity = updated_quantity 
+        storedInCart[i].quantity = parseInt(storedInCart[i].quantity)+ parseInt(updated_quantity) 
     }
 }
 
     $(this).parents('tr').find('.editclass').show();
     $(this).parents('tr').find('.updatebutton').remove();
+    display2()
     
   });
