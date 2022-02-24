@@ -7,7 +7,7 @@ var products = [
 ];
 
 storedInCart = []
-//var PriceCalc  =0
+var PriceCalc  =0
 for(var i =0 ; i < products.length ; i++)
 {
     products[i].quantity = 0;
@@ -43,9 +43,11 @@ $(document).ready(function(){
          if(Ispresent(pid))
          {
               increaseQuantity(product)
+              increasePrice(product)
          }else{
              storedInCart.push(product)
              increaseQuantity(product)
+             increasePrice(product)
          }        
         
         display2()
@@ -70,6 +72,12 @@ $(document).ready(function(){
  }
 
 
+ function increasePrice(product)
+ {
+    PriceCalc = PriceCalc + product.price
+ }
+
+
 function display2() {
 $("#id1").html("<h1>Items Added in CART</h1>")
     var html = '';
@@ -82,7 +90,12 @@ $("#id1").html("<h1>Items Added in CART</h1>")
         html += '<tr><td>'+storedInCart[i].id+'</td><td>'+storedInCart[i].name+'</td><td>'+calc+ '</td><td>'+storedInCart[i].quantity+'</td><td><button class="editclass" data-pid2 = "'+storedInCart[i].id+'">ADD</button></td> <td><button id="delclass" data-did = "'+storedInCart[i].id+'">DELETE</button></td></tr>';
        // PriceCalc +=priceC
     }
-    html += '</table><br><button id="emptycart">EMPTY CART</button>';
+    
+    html += '</table><br>'
+   // html += '<h1>toal price'+price+'</h1>'
+   html += '<br><h3>Total price = '+PriceCalc+'</h3><br>'
+    html +='<button id="emptycart">EMPTY CART</button>';
+    
     $("#footer").html(html)   
     // $("#id3").html('<p>total price = '+PriceCalc+'</p>') 
 }
@@ -100,21 +113,15 @@ function getProduct(pid)
 }
 
 $("body").on("click","#delclass" ,function(e){
-   // console.log("delete key is pressed")
     var did = $(this).data('did');
     var product = getProduct(did);
-   // console.log("in delete fucntoin pid = "+did);
     for(var  i =0 ; i < storedInCart.length ; i++)
     {
         if(did == storedInCart[i].id)
-        {
-            if(storedInCart[i].quantity == 1)
-            {
+        {         
+                PriceCalc = PriceCalc -  storedInCart[i].quantity * storedInCart[i].price
                 $(this).parents('tr').remove();
-                storedInCart.splice(i, 1);
-                break;
-            }
-            storedInCart[i].quantity = storedInCart[i].quantity - 1;        
+                storedInCart.splice(i, 1);     
         }
     }
     display2()
@@ -123,6 +130,7 @@ $("body").on("click","#delclass" ,function(e){
 
 $("body").on("click","#emptycart" ,function(e){
     storedInCart = []
+    PriceCalc =0 
     display2()
   });
 
@@ -151,10 +159,25 @@ $("body").on("click",".editclass" ,function(e){
   $('body').on('click','.updatebutton',function() {
     var updated_quantity=$(this).parents('tr').find("input[name='edit_quantity']").val();
 console.log("after press update button value wil be"+updated_quantity)
+//console.log()
 
 var pid = $(this).data('pid3');
 var product = getProduct(pid);
 console.log("in update fucntoin pid = "+pid);
+
+for(var  i =0 ; i < storedInCart.length ; i++)
+{
+    if(pid == storedInCart[i].id)
+    {         
+            // var temp =  storedInCart[i].quantity
+            // var temp2 = storedInCart[i].price
+            // console.log("updateed quantity"+temp)
+            // console.log("updateed price"+temp2)
+            PriceCalc = PriceCalc + storedInCart[i].price * updated_quantity
+           console.log("updateed quantity"+PriceCalc)
+               
+    }
+}
 
 for(var i =0 ; i < storedInCart.length ; i++)
 {
